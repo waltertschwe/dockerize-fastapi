@@ -10,20 +10,38 @@ services:
     networks:
       tube_network:
         ipv4_address: 172.28.5.1
+
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+    networks:
+      tube_network:
+        ipv4_address: 172.28.5.2
   
-  # redis:
-  #   image: "redis:7.0-alpine"
-  #   command: redis-server
-  #   ports:
-  #   - "6379:6379"
-  #   volumes:
-  #   - /redis-data:/var/lib/redis
-  #   - /redis.conf:/usr/local/etc/redis/redis.conf
-  #   environment:
-  #   - REDIS_REPLICATION_MODE=master
-  #   networks:
-  #     tube_network:
-  #       ipv4_address: 172.16.0.2
+  redis:
+    image: "redis:7.0-alpine"
+    command: redis-server
+    ports:
+    - "6379:6379"
+    volumes:
+    - /redis-data:/var/lib/redis
+    - /redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+    - REDIS_REPLICATION_MODE=master
+    networks:
+      tube_network:
+        ipv4_address: 172.28.5.3
+
+volumes:
+  db:
+    driver: local
 
 networks:
   tube_network:
